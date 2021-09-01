@@ -1,8 +1,19 @@
 const { Telegraf, Markup } = require('telegraf');
+const express = require('express');
 require('dotenv').config();
 const { change } = require('./utils/converter');
 
+const app = express();
 const bot = new Telegraf(process.env.TOKEN);
+
+const port = process.env.PORT || 3000;
+app.get('/', (req, res) => {
+  res.send('Hello Telegram!');
+});
+
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
 
 // Listener /help
 bot.help((ctx) =>
@@ -50,7 +61,10 @@ bot.action('EUR', async (ctx) => {
   }
 });
 
-bot.launch();
+bot.hears(/./, (ctx) => ctx.reply('Testing'));
+bot.startPolling();
+
+// bot.launch();
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
